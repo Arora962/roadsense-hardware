@@ -6,21 +6,19 @@ so you never have to go hunting through multiple files.
 """
 
 # ---------------------------------------------------------------------------
-# Serial link to the ESP32 (connected via USB to the Pi)
+# Serial link to the ESP8266 (connected via USB to the Pi)
 # ---------------------------------------------------------------------------
-# Run `ls /dev/tty*` with the ESP32 UNPLUGGED, then again with it PLUGGED IN.
+# Run `ls /dev/tty*` with the ESP8266 UNPLUGGED, then again with it PLUGGED IN.
 # The new entry that appears (usually /dev/ttyUSB0 or /dev/ttyACM0) is your port.
+#
+# This ONE serial link now carries everything: buzzer commands going out,
+# and GPS NMEA sentences coming in - the GPS module is wired to the ESP8266
+# (D2), not the Pi anymore, and the ESP8266 forwards raw GPS bytes over this
+# same USB cable. There is no separate GPS_SERIAL_PORT any more - gps_sensor.py
+# reads GPS lines through esp32_link/serial_link.py instead of opening its
+# own port. Don't wire a GPS module directly to the Pi while this is active.
 ESP32_SERIAL_PORT = "/dev/ttyUSB0"
 ESP32_BAUD_RATE = 115200
-
-# ---------------------------------------------------------------------------
-# GPS module
-# ---------------------------------------------------------------------------
-# If it's a USB GPS dongle: usually /dev/ttyUSB1 (check with `ls /dev/tty*` the
-# same way as above, since the ESP32 will likely grab ttyUSB0 first).
-# If it's wired directly to the Pi's GPIO UART pins: use "/dev/serial0" instead.
-GPS_SERIAL_PORT = "/dev/serial0"
-GPS_BAUD_RATE = 9600
 
 # ---------------------------------------------------------------------------
 # Ultrasonic sensor (HC-SR04) - BCM pin numbers
