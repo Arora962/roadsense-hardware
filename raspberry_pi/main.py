@@ -44,9 +44,21 @@ def main():
             object_class, object_confidence = camera_sensor.classify_frame()
             location = gps_sensor.get_location()
 
+            print(
+                f"IMU={imu_reading:.2f} | "
+                f"Distance={distance_cm:.1f} cm | "
+                f"Close={ultrasonic_close} | "
+                f"Object={object_class} ({object_confidence:.2f}) | "
+                f"GPS={location}"
+            )
+
             event = near_miss_detector.evaluate(
-                imu_reading, ultrasonic_close, distance_cm,
-                object_class, object_confidence, location,
+                imu_reading,
+                ultrasonic_close,
+                distance_cm,
+                object_class,
+                object_confidence,
+                location,
             )
 
             if event:
@@ -59,8 +71,9 @@ def main():
             print("\nStopping RoadSense.")
             motor_control.stop()
             break
+
         except Exception as e:
-            print(f"[Main] Unexpected error, continuing loop: {e}")
+            print(f"[Main] {e}")
             time.sleep(1)
 
 
