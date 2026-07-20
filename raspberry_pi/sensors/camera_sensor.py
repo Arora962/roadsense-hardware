@@ -81,6 +81,14 @@ def classify_frame():
     if frame is None:
         return "unknown", 0.0
 
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+
+    if len(frame.shape) == 3 and frame.shape[2] == 4:
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
+
+    if frame is None:
+        return "unknown", 0.0
+
     # Safety: convert any 4-channel frame to 3-channel.
     if len(frame.shape) == 3 and frame.shape[2] == 4:
         frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
@@ -113,6 +121,7 @@ def classify_frame():
             continue
 
         class_name = CLASSES[class_id]
+        print(f"{class_name}: {confidence:.2f}")
 
         if class_name in RELEVANT_CLASSES and confidence > best_conf:
             best_label = RELEVANT_CLASSES[class_name]

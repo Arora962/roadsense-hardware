@@ -51,7 +51,7 @@ AUTO_REVERSE_SECONDS = 2   # how long the car reverses for when a near-miss is c
 USE_OBJECT_DETECTION_MODEL = True
 MODEL_PROTOTXT = "models/MobileNetSSD_deploy.prototxt"
 MODEL_WEIGHTS = "models/MobileNetSSD_deploy.caffemodel"
-DETECTION_CONFIDENCE = 0.5
+DETECTION_CONFIDENCE = 0.2
 
 # ---------------------------------------------------------------------------
 # Local storage
