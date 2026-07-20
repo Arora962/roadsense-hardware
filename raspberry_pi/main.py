@@ -8,6 +8,9 @@ buzzer (via the ESP32), and reverses the car.
 Run with:  python3 main.py
 Stop with: Ctrl+C
 """
+import sys
+sys.path.append("/usr/lib/python3/dist-packages")
+
 import time
 import config
 from sensors import imu_sensor, ultrasonic_sensor, gps_sensor, camera_sensor
