@@ -23,8 +23,8 @@ ESP32_BAUD_RATE = 115200
 # ---------------------------------------------------------------------------
 # Ultrasonic sensor (HC-SR04) - BCM pin numbers
 # ---------------------------------------------------------------------------
-ULTRASONIC_TRIGGER_PIN = 24
-ULTRASONIC_ECHO_PIN = 23
+ULTRASONIC_TRIGGER_PIN = 23
+ULTRASONIC_ECHO_PIN = 24
 ULTRASONIC_NEAR_MISS_CM = 60   # distance below this counts as "something close"
 
 # ---------------------------------------------------------------------------
