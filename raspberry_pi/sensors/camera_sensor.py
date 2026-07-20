@@ -8,6 +8,7 @@ else keeps working - the near-miss rule can still fire off the IMU +
 ultrasonic alone. Adding the real model is optional, do it later (see
 README.md).
 """
+
 import cv2
 import os
 import config
@@ -29,8 +30,15 @@ RELEVANT_CLASSES = {
 _net = None
 _model_available = False
 
-if config.USE_OBJECT_DETECTION_MODEL and os.path.exists(config.MODEL_PROTOTXT) and os.path.exists(config.MODEL_WEIGHTS):
-    _net = cv2.dnn.readNetFromCaffe(config.MODEL_PROTOTXT, config.MODEL_WEIGHTS)
+if (
+    config.USE_OBJECT_DETECTION_MODEL
+    and os.path.exists(config.MODEL_PROTOTXT)
+    and os.path.exists(config.MODEL_WEIGHTS)
+):
+    _net = cv2.dnn.readNetFromCaffe(
+        config.MODEL_PROTOTXT,
+        config.MODEL_WEIGHTS,
+    )
     _model_available = True
 else:
     print("[Camera] Object detection model not found in models/ - camera will report 'unknown' for now.")
@@ -41,37 +49,73 @@ _picam = None
 
 def _get_camera():
     global _picam
+
     if _picam is None:
         from picamera2 import Picamera2
 
         _picam = Picamera2()
-        cam_config = _picam.create_preview_configuration(main={"size": (320, 240)})
+
+        cam_config = _picam.create_preview_configuration(
+            main={
+                "size": (320, 240),
+                "format": "RGB888"
+            }
+        )
+
         _picam.configure(cam_config)
         _picam.start()
+
     return _picam
 
 
 def classify_frame():
-    """Grabs one frame and returns (object_class, confidence). object_class is
-    one of: 'pedestrian', 'two-wheeler', 'vehicle', 'none', or 'unknown'."""
+    """
+    Returns:
+        ("pedestrian" | "vehicle" | "two-wheeler" | "none" | "unknown",
+         confidence)
+    """
+
     cam = _get_camera()
     frame = cam.capture_array()
+
+    if frame is None:
+        return "unknown", 0.0
+
+    # Safety: convert any 4-channel frame to 3-channel.
+    if len(frame.shape) == 3 and frame.shape[2] == 4:
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
 
     if not _model_available:
         return "unknown", 0.0
 
-    blob = cv2.dnn.blobFromImage(cv2.resize(frame, (300, 300)), 0.007843, (300, 300), 127.5)
+    blob = cv2.dnn.blobFromImage(
+        cv2.resize(frame, (300, 300)),
+        scalefactor=0.007843,
+        size=(300, 300),
+        mean=127.5,
+    )
+
     _net.setInput(blob)
     detections = _net.forward()
 
-    best_label, best_conf = "none", 0.0
+    best_label = "none"
+    best_conf = 0.0
+
     for i in range(detections.shape[2]):
-        confidence = detections[0, 0, i, 2]
-        if confidence > config.DETECTION_CONFIDENCE:
-            class_id = int(detections[0, 0, i, 1])
-            class_name = CLASSES[class_id] if class_id < len(CLASSES) else "unknown"
-            if class_name in RELEVANT_CLASSES and confidence > best_conf:
-                best_label = RELEVANT_CLASSES[class_name]
-                best_conf = float(confidence)
+        confidence = float(detections[0, 0, i, 2])
+
+        if confidence < config.DETECTION_CONFIDENCE:
+            continue
+
+        class_id = int(detections[0, 0, i, 1])
+
+        if class_id >= len(CLASSES):
+            continue
+
+        class_name = CLASSES[class_id]
+
+        if class_name in RELEVANT_CLASSES and confidence > best_conf:
+            best_label = RELEVANT_CLASSES[class_name]
+            best_conf = confidence
 
     return best_label, best_conf
