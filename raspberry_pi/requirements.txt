@@ -1,0 +1,5 @@
+gpiozero
+pyserial
+pynmea2
+mpu6050-raspberrypi
+requests

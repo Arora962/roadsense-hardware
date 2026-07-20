@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+env/
+roadsense-env/
+
+# Environment files
+.env
+
+# IDEs
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Python cache
+.pytest_cache/
+.mypy_cache/
+
+# Logs
+*.log
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Arduino temporary files
+*.ino.cpp
+*.elf
+*.bin
+
+# Model files (large)
+raspberry_pi/models/*.caffemodel
+raspberry_pi/models/*.prototxt
+
+# Generated images
+*.jpg
+*.jpeg
+*.png
+
+# GPS logs
+*.nmea
+
+# Temporary files
+*.tmp
+*.bak
