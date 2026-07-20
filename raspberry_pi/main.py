@@ -45,7 +45,8 @@ def main():
             location = gps_sensor.get_location()
 
             print(
-                f"IMU={imu_reading:.2f} | "
+                f"Jerk={imu_reading['jerk']:.2f} | "
+                f"Spike={imu_reading['is_spike']} | "
                 f"Distance={distance_cm:.1f} cm | "
                 f"Close={ultrasonic_close} | "
                 f"Object={object_class} ({object_confidence:.2f}) | "
