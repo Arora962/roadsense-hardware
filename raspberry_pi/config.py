@@ -19,7 +19,7 @@ ESP32_BAUD_RATE = 115200
 # If it's a USB GPS dongle: usually /dev/ttyUSB1 (check with `ls /dev/tty*` the
 # same way as above, since the ESP32 will likely grab ttyUSB0 first).
 # If it's wired directly to the Pi's GPIO UART pins: use "/dev/serial0" instead.
-GPS_SERIAL_PORT = "/dev/ttyUSB1"
+GPS_SERIAL_PORT = "/dev/serial0"
 GPS_BAUD_RATE = 9600
 
 # ---------------------------------------------------------------------------
@@ -27,13 +27,13 @@ GPS_BAUD_RATE = 9600
 # ---------------------------------------------------------------------------
 ULTRASONIC_TRIGGER_PIN = 24
 ULTRASONIC_ECHO_PIN = 23
-ULTRASONIC_NEAR_MISS_CM = 40   # distance below this counts as "something close"
+ULTRASONIC_NEAR_MISS_CM = 60   # distance below this counts as "something close"
 
 # ---------------------------------------------------------------------------
 # MPU6050 (accelerometer + gyroscope)
 # ---------------------------------------------------------------------------
 MPU6050_I2C_ADDRESS = 0x68
-MPU6050_JERK_THRESHOLD = 8.0   # tune this by watching printed jerk values while testing
+MPU6050_JERK_THRESHOLD = 5.0   # tune this by watching printed jerk values while testing
 
 # ---------------------------------------------------------------------------
 # Motor pins - same as your motor_test.py
