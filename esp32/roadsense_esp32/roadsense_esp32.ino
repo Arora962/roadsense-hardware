@@ -1,32 +1,36 @@
 /*
-  RoadSense - ESP32 Companion Sketch
-  ------------------------------------
-  Two jobs, nothing else:
-    1) Plays a continuous "heartbeat" pulse animation on an 8x8 MAX7219
-       dot-matrix - purely decorative, always running.
-    2) Listens on USB Serial for a "BUZZ" command from the Raspberry Pi
-       and sounds the buzzer for a short moment when a near-miss is detected.
+  RoadSense - ESP8266 Companion + GPS Test
+  -----------------------------------------
+  - Heartbeat pulse animation on 8x8 MAX7219
+  - Buzzer on "BUZZ" command from Raspberry Pi
+  - GPS (NEO-6M) on D2 – NMEA sentences printed to Serial
+    (just for testing; remove when you know it works)
 
-  Library required (install via Arduino IDE: Sketch > Include Library > Manage Libraries):
-    "LedControl" by Eberhard Fahle
+  Wiring:
+    MAX7219:  DIN -> D7, CLK -> D5, CS -> D8, VCC -> 5V, GND -> GND
+    Buzzer:   + -> D6, - -> GND
+    GPS:      VCC -> 3V3, GND -> GND, TX -> D2 (RX left unconnected)
 
-  Wiring (change the pin numbers below if you wired it differently):
-    MAX7219 matrix:  DIN -> GPIO23, CLK -> GPIO18, CS -> GPIO5, VCC -> 5V, GND -> GND
-    Buzzer:          + -> GPIO4, - -> GND
-    Serial link:     just the USB cable to the Raspberry Pi - no extra wiring needed
+  Serial link: USB cable to the Pi (115200 baud)
 */
 
 #include "LedControl.h"
+#include <SoftwareSerial.h>
 
-// ---- Pins (change these if your wiring is different) ----
+// ---- Pins ----
 const int MATRIX_DIN = D7;
 const int MATRIX_CLK = D5;
 const int MATRIX_CS  = D8;
 const int BUZZER_PIN = D6;
+const int GPS_RX     = D2;   // GPS TX connected here
+const int GPS_TX     = D1;   // not used, but SoftwareSerial needs a TX pin
+
+// GPS software serial (D2 = RX, D1 = TX)
+SoftwareSerial gpsSerial(GPS_RX, GPS_TX);
 
 LedControl lc = LedControl(MATRIX_DIN, MATRIX_CLK, MATRIX_CS, 1);
 
-// A simple 8x8 heart shape
+// Heart shape
 byte heart[8] = {
   0b01100110,
   0b11111111,
@@ -38,15 +42,15 @@ byte heart[8] = {
   0b00000000
 };
 
-// ---- Heartbeat pulse animation (non-blocking, uses millis()) ----
+// ---- Heartbeat pulse ----
 unsigned long lastPulseTime = 0;
 int pulseBrightness = 1;
 bool pulseGoingUp = true;
-const int PULSE_INTERVAL_MS = 60;  // how fast the pulse fades in/out
+const int PULSE_INTERVAL_MS = 60;
 const int PULSE_MIN = 1;
 const int PULSE_MAX = 12;
 
-// ---- Buzzer state (non-blocking) ----
+// ---- Buzzer state ----
 bool buzzerActive = false;
 unsigned long buzzerStartTime = 0;
 const int BUZZER_DURATION_MS = 800;
@@ -54,9 +58,10 @@ const int BUZZER_DURATION_MS = 800;
 String serialBuffer = "";
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(115200);        // main Serial to Pi
+  gpsSerial.begin(9600);       // GPS at 9600 baud
 
-  lc.shutdown(0, false);        // wake the display up
+  lc.shutdown(0, false);
   lc.setIntensity(0, PULSE_MIN);
   lc.clearDisplay(0);
   drawHeart();
@@ -64,13 +69,14 @@ void setup() {
   pinMode(BUZZER_PIN, OUTPUT);
   digitalWrite(BUZZER_PIN, LOW);
 
-  Serial.println("ESP32_READY");
+  Serial.println("ESP8266_READY");
 }
 
 void loop() {
   handleHeartbeat();
   handleSerialCommands();
   handleBuzzer();
+  handleGPS();                  // forward GPS data to Serial
 }
 
 void drawHeart() {
@@ -119,5 +125,12 @@ void handleBuzzer() {
   if (buzzerActive && (millis() - buzzerStartTime >= BUZZER_DURATION_MS)) {
     digitalWrite(BUZZER_PIN, LOW);
     buzzerActive = false;
+  }
+}
+
+// ---- GPS passthrough for testing ----
+void handleGPS() {
+  while (gpsSerial.available()) {
+    Serial.write(gpsSerial.read());
   }
 }
