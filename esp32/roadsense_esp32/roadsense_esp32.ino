@@ -19,10 +19,10 @@
 #include "LedControl.h"
 
 // ---- Pins (change these if your wiring is different) ----
-const int MATRIX_DIN = 23;
-const int MATRIX_CLK = 18;
-const int MATRIX_CS  = 5;
-const int BUZZER_PIN = 4;
+const int MATRIX_DIN = D7;
+const int MATRIX_CLK = D5;
+const int MATRIX_CS  = D8;
+const int BUZZER_PIN = D6;
 
 LedControl lc = LedControl(MATRIX_DIN, MATRIX_CLK, MATRIX_CS, 1);
 
