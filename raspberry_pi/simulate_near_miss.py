@@ -5,6 +5,9 @@ before you worry about getting the real sensor thresholds tuned.
 
 Run with: python3 simulate_near_miss.py
 """
+import sys
+sys.path.append("/usr/lib/python3/dist-packages")
+
 import time
 from storage import event_logger
 from esp32_link import serial_link
