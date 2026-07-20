@@ -28,12 +28,12 @@ def connect():
     try:
         # timeout=0 -> non-blocking reads, so read_lines() never stalls the
         # main loop waiting for bytes that may not be coming this instant.
-        _esp32 = serial.Serial(config.ESP32_SERIAL_PORT, config.ESP32_BAUD_RATE, timeout=0)
+        _esp32 = serial.Serial(config.ESP8266_PORT, config.ESP32_BAUD_RATE, timeout=0)
         time.sleep(2)  # give the ESP8266 a moment to reset after the port opens
-        print(f"[ESP8266] Connected on {config.ESP32_SERIAL_PORT}")
+        print(f"[ESP8266] Connected on {config.ESP8266_PORT}")
         return True
     except Exception as e:
-        print(f"[ESP8266] Could not connect on {config.ESP32_SERIAL_PORT}: {e}")
+        print(f"[ESP8266] Could not connect on {config.ESP8266_PORT}: {e}")
         print("[ESP8266] Run `ls /dev/tty*` with it plugged/unplugged to find the right port, then update config.py")
         print("[ESP8266] Note: GPS now rides on this same link, so no GPS fix either until this connects.")
         _esp32 = None
