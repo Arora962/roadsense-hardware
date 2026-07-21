@@ -17,7 +17,7 @@ so you never have to go hunting through multiple files.
 # same USB cable. There is no separate GPS_SERIAL_PORT any more - gps_sensor.py
 # reads GPS lines through esp32_link/serial_link.py instead of opening its
 # own port. Don't wire a GPS module directly to the Pi while this is active.
-ESP8266_PORT = "/dev/ttyUSB1"
+ESP8266_PORT = "/dev/ttyUSB0"
 ESP32_BAUD_RATE = 115200
 
 # ---------------------------------------------------------------------------
