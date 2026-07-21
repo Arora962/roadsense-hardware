@@ -62,5 +62,5 @@ DB_PATH = "data/events.db"
 # Backend server (not needed yet - flip SEND_TO_BACKEND on once your
 # Node/Express server is running)
 # ---------------------------------------------------------------------------
-BACKEND_URL = "http://localhost:5000/api/events"
-SEND_TO_BACKEND = False
+BACKEND_URL = "http://13.203.205.175:5000/api/events"
+SEND_TO_BACKEND = True
